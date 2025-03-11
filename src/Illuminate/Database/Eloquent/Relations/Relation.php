@@ -486,7 +486,7 @@ abstract class Relation implements BuilderContract
         }
 
         return array_combine(array_map(function ($model) {
-            return (new $model)->getTable();
+            return resolve($model)->getTable();
         }, $models), $models);
     }
 

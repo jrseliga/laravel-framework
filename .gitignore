@@ -9,3 +9,9 @@ Thumbs.db
 /.fleet
 /.vscode
 .phpunit.result.cache
+.env.devbox
+devbox.json
+devbox.d
+.devbox
+devbox.lock
+.envrc

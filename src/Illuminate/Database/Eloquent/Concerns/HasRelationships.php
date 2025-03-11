@@ -790,7 +790,7 @@ trait HasRelationships
      */
     protected function newRelatedInstance($class)
     {
-        return tap(new $class, function ($instance) {
+        return tap(resolve($class), function ($instance) {
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->connection);
             }
@@ -805,7 +805,7 @@ trait HasRelationships
      */
     protected function newRelatedThroughInstance($class)
     {
-        return new $class;
+        return resolve($class);
     }
 
     /**

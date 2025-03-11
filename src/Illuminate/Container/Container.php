@@ -899,7 +899,6 @@ class Container implements ArrayAccess, ContainerContract
         if ($concrete instanceof Closure) {
             return $concrete($this, $this->getLastParameterOverride());
         }
-
         try {
             $reflector = new ReflectionClass($concrete);
         } catch (ReflectionException $e) {

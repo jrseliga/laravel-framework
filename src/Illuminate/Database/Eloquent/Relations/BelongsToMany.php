@@ -170,7 +170,7 @@ class BelongsToMany extends Relation
             return $table;
         }
 
-        $model = new $table;
+        $model = resolve($table);
 
         if (! $model instanceof Model) {
             return $table;

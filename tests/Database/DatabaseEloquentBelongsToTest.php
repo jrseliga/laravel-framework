@@ -2,12 +2,13 @@
 
 namespace Illuminate\Tests\Database;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DatabaseEloquentBelongsToTest extends TestCase
 {
@@ -186,6 +187,25 @@ class DatabaseEloquentBelongsToTest extends TestCase
         $relation->getQuery()->shouldReceive('whereIntegerInRaw')->once()->with('relation.id', m::mustBe([]));
         $models = [new MissingEloquentBelongsToModelStub, new MissingEloquentBelongsToModelStub];
         $relation->addEagerConstraints($models);
+    }
+
+    public function testBanana()
+    {
+        $total = 10 * 10 * 10 * 10 * 10 * 10;
+        $start = now();
+        $class = EloquentBelongsToModelStub::class;
+        collect(range(1, $total))->each(
+            fn () => new $class
+        );
+
+        dump(now()->diffInSeconds($start));
+
+        $start = now();
+        collect(range(1, $total))->each(
+            fn () => Container::getInstance()->make($class)
+        );
+
+        dump(now()->diffInSeconds($start));
     }
 
     public function testDefaultEagerConstraintsWhenIncrementingAndNonIntKeyType()
