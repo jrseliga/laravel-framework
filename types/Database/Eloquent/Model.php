@@ -3,7 +3,10 @@
 namespace Illuminate\Types\Model;
 
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Attributes\QueriedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\HasBuilder;
 use Illuminate\Database\Eloquent\HasCollection;
 use Illuminate\Database\Eloquent\Model;
 use User;
@@ -39,6 +42,9 @@ function test(User $user, Post $post, Comment $comment, Article $article): void
     assertType('Illuminate\Database\Eloquent\Builder<User>', $user->prunable());
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<Illuminate\Notifications\DatabaseNotification, User>', $user->notifications());
 
+    assertType('Illuminate\Types\Model\ProductBuilder<Illuminate\Types\Model\Product>', Product::query());
+    assertType('Illuminate\Types\Model\ProductBuilder<Illuminate\Types\Model\Product>', $product->newQuery());
+
     assertType('Illuminate\Database\Eloquent\Collection<(int|string), User>', $user->newCollection([new User()]));
     assertType('Illuminate\Types\Model\Posts<(int|string), Illuminate\Types\Model\Post>', $post->newCollection(['foo' => new Post()]));
     assertType('Illuminate\Types\Model\Articles<(int|string), Illuminate\Types\Model\Article>', $article->newCollection([new Article()]));
@@ -47,6 +53,9 @@ function test(User $user, Post $post, Comment $comment, Article $article): void
     assertType('bool', $user->restore());
     assertType('User', $user->restoreOrCreate());
     assertType('User', $user->createOrRestore());
+
+    assertType('Illuminate\Types\Model\ArticleBuilder<Illuminate\Types\Model\Article>', Article::query());
+    assertType('Illuminate\Types\Model\ArticleBuilder<Illuminate\Types\Model\Article>', $article->newQuery());
 }
 
 class Post extends Model
@@ -84,10 +93,13 @@ final class Comments extends Collection
 }
 
 #[CollectedBy(Articles::class)]
+#[QueriedBy(ArticleBuilder::class)]
 class Article extends Model
 {
     /** @use HasCollection<Articles<array-key, static>> */
     use HasCollection;
+    /** @use HasBuilder<ArticleBuilder<static>> */
+    use HasBuilder;
 }
 
 /**
@@ -96,5 +108,13 @@ class Article extends Model
  *
  * @extends Collection<TKey, TModel> */
 class Articles extends Collection
+{
+}
+
+/**
+ * @template TModel of Article
+ * @extends Builder<TModel>
+ */
+class ArticleBuilder extends Builder
 {
 }

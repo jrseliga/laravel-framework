@@ -17,6 +17,7 @@ use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\QueriedBy;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\ArrayObject;
@@ -3217,6 +3218,12 @@ class DatabaseEloquentModelTest extends TestCase
         $this->assertEquals(EloquentModelWithUseFactoryAttribute::class, $factory->modelName());
         $this->assertEquals('test name', $instance->name); // Small smoke test to ensure the factory is working
     }
+
+    public function testQueriedByAttribute()
+    {
+        $model = new EloquentModelWithQueriedByAttribute();
+        $this->assertInstanceOf(CustomEloquentBuilder::class, $model->newQuery());
+    }
 }
 
 class EloquentTestObserverStub
@@ -4029,4 +4036,15 @@ class EloquentModelWithUseFactoryAttributeFactory extends Factory
 class EloquentModelWithUseFactoryAttribute extends Model
 {
     use HasFactory;
+}
+
+class CustomEloquentBuilder extends Builder
+{
+    // Custom builder implementation for testing
+}
+
+#[QueriedBy(CustomEloquentBuilder::class)]
+class EloquentModelWithQueriedByAttribute extends Model
+{
+    //
 }

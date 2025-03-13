@@ -40,6 +40,8 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
         ForwardsCalls;
     /** @use HasCollection<\Illuminate\Database\Eloquent\Collection<array-key, static & self>> */
     use HasCollection;
+    /** @use HasBuilder<\Illuminate\Database\Eloquent\Builder<static & self>> */
+    use HasBuilder;
 
     /**
      * The connection name for the model.
@@ -1530,9 +1532,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     public function newModelQuery()
     {
-        return $this->newEloquentBuilder(
-            $this->newBaseQueryBuilder()
-        )->setModel($this);
+        return $this->newBaseQueryBuilder()->setModel($this);
     }
 
     /**
@@ -1592,17 +1592,6 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
     public function newQueryForRestoration($ids)
     {
         return $this->newQueryWithoutScopes()->whereKey($ids);
-    }
-
-    /**
-     * Create a new Eloquent query builder for the model.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder<*>
-     */
-    public function newEloquentBuilder($query)
-    {
-        return new static::$builder($query);
     }
 
     /**

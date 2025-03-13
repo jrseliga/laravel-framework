@@ -2,11 +2,21 @@
 
 namespace Illuminate\Database\Eloquent;
 
+use Illuminate\Database\Eloquent\Attributes\QueriedBy;
+use ReflectionClass;
+
 /**
  * @template TBuilder of \Illuminate\Database\Eloquent\Builder
  */
 trait HasBuilder
 {
+    /**
+     * The resolved builder class names by model.
+     *
+     * @var array<class-string<static>, class-string<TBuilder>>
+     */
+    protected static array $resolvedEloquentBuilderClasses = [];
+
     /**
      * Begin querying the model.
      *
@@ -25,7 +35,27 @@ trait HasBuilder
      */
     public function newEloquentBuilder($query)
     {
-        return parent::newEloquentBuilder($query);
+        static::$resolvedEloquentBuilderClasses[static::class] ??= ($this->resolveEloquentBuilderFromAttribute() ?? static::$builder);
+
+        return new static::$resolvedEloquentBuilderClasses[static::class]($query);
+    }
+
+    /**
+     * Resolve the builder class from the QueriedBy attribute.
+     *
+     * @return class-string<TBuilder>|null
+     */
+    protected function resolveEloquentBuilderFromAttribute()
+    {
+        $reflectionClass = new ReflectionClass(static::class);
+
+        $attributes = $reflectionClass->getAttributes(QueriedBy::class);
+
+        if (! isset($attributes[0]) || ! isset($attributes[0]->getArguments()[0])) {
+            return null;
+        }
+
+        return $attributes[0]->getArguments()[0];
     }
 
     /**
