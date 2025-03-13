@@ -2,6 +2,7 @@
 
 namespace Illuminate\Tests\Integration\Database;
 
+use Illuminate\Database\Eloquent\Attributes\QueriedBy;
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -181,11 +182,11 @@ class ModelInspectorTest extends DatabaseTestCase
 
 #[ObservedBy(ModelInspectorTestModelObserver::class)]
 #[CollectedBy(ModelInspectorTestModelEloquentCollection::class)]
+#[QueriedBy(ModelInspectorTestModelBuilder::class)]
 class ModelInspectorTestModel extends Model
 {
     use HasUuids;
 
-    protected static string $builder = ModelInspectorTestModelBuilder::class;
     public $table = 'model_info_extractor_test_model';
     protected $guarded = ['name'];
     protected $casts = ['nullable_date' => 'datetime', 'a_bool' => 'bool'];
