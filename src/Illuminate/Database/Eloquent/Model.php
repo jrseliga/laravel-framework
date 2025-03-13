@@ -1532,9 +1532,7 @@ abstract class Model implements Arrayable, ArrayAccess, CanBeEscapedWhenCastToSt
      */
     public function newModelQuery()
     {
-        return $this->newEloquentBuilder(
-            $this->newBaseQueryBuilder()
-        )->setModel($this);
+        return $this->newBaseQueryBuilder()->setModel($this);
     }
 
     /**
